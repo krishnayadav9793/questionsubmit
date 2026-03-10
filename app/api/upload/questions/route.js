@@ -22,7 +22,7 @@ export async function POST(req) {
 
         // insert question
         const subjId= await sql`select subject_id from "Subject" where subject_name=${Subject}`
-        console.log(subjId[0].subject_id)
+        // console.log(subjId[0].subject_id)
         const result = await sql`
         INSERT INTO "Questions"
         ("Qusetion_Statement","Option_1","Option_2","Option_3","Option_4","Image","Answer","subject_id")
