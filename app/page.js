@@ -35,36 +35,44 @@ export default function Home() {
 
     try {
 
-      const reader = new FileReader();
+  
+  if (file) {
 
-      reader.readAsDataURL(file);
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
 
-      reader.onloadend = async () => {
+    reader.onloadend = async () => {
 
-        try {
+      try {
 
-          const res = await fetch("/api/upload/image", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ image: reader.result }),
-          });
+        const res = await fetch("/api/upload/image", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ image: reader.result }),
+        });
 
-          const data = await res.json();
+        const data = await res.json();
 
-          console.log("Image uploaded:", data.secure_url);
+        console.log("Image uploaded:", data.secure_url);
 
-          await dataSave(data.secure_url);
+        await dataSave(data.secure_url);
 
-        } catch (e) {
-          console.log("error in image upload", e);
-        }
+      } catch (e) {
+        console.log("error in image upload", e);
+      }
 
-      };
+    };
 
-    } catch (e) {
-      console.log("error reading file", e);
-    }
+  } else {
 
+    // No image selected
+    await dataSave(null);
+
+  }
+
+} catch (e) {
+  console.log("error reading file", e);
+}
 
     async function dataSave(imageUrl) {
 
