@@ -1,7 +1,7 @@
 import cloudinary from "@/lib/cloudinary";
 
 export async function POST(req) {
-  console.log("hii hello")
+  // console.log("hii hello")
     try {
     const body = await req.json();
 

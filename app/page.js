@@ -18,6 +18,7 @@ export default function Home() {
   const [imagePreview, setImagePreview] = useState(null);
   const [submitted, setSubmitted] = useState(false);
   const [dragOver, setDragOver] = useState(false);
+  const [exam, setExam] = useState('');
   const fileRef = useRef();
   const [file, setFile] = useState(null);
   const handleOption = (i, v) => {
@@ -32,38 +33,70 @@ export default function Home() {
 
   const handleSubmit = async () => {
 
-
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-
     try {
-      reader.onloadend = async () => {
-        const res = await fetch("/api/upload/image", {
-          method: "POST",
-          body: JSON.stringify({ image: reader.result }),
-        });
 
-        const data = await res.json();
-        console.log(data.secure_url);
+      const reader = new FileReader();
+
+      reader.readAsDataURL(file);
+
+      reader.onloadend = async () => {
+
+        try {
+
+          const res = await fetch("/api/upload/image", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ image: reader.result }),
+          });
+
+          const data = await res.json();
+
+          console.log("Image uploaded:", data.secure_url);
+
+          await dataSave(data.secure_url);
+
+        } catch (e) {
+          console.log("error in image upload", e);
+        }
+
+      };
+
+    } catch (e) {
+      console.log("error reading file", e);
+    }
+
+
+    async function dataSave(imageUrl) {
+
+      try {
+
         const res1 = await fetch("/api/upload/questions", {
           method: "POST",
-          body: JSON.stringify({ Qusetion_Statement: question, Option_1: options[0], Option_2: options[1], Option_3: options[2], Option_4: options[3], Image: data.secure_url, Answer: correct }),
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            Qusetion_Statement: question,
+            Option_1: options[0],
+            Option_2: options[1],
+            Option_3: options[2],
+            Option_4: options[3],
+            Image: imageUrl,
+            Answer: correct,
+            Exam: exam
+          }),
         });
-        console.log(res1)
-      };
-    } catch (e) {
-      console.log("error in image upload", e)
+
+        console.log("Question saved", await res1.json());
+
+      } catch (e) {
+        console.log("error in question upload", e);
+      }
+      setSubmitted(true)
+      setTimeout(() => setSubmitted(false), 3000);
 
     }
 
-    // try {
-
-    // } catch (e) {
-    //   console.log("error in question upload")
-    // }
-    setSubmitted(true)
-    setTimeout(() => setSubmitted(false), 3000);
   };
+
 
   return (
     <div className="min-h-screen bg-[#070711] flex items-center justify-center p-6 relative overflow-hidden font-serif">
@@ -176,7 +209,31 @@ export default function Home() {
             />
           </div>
         </div>
+        {/* <FormControl fullWidth> */}
+        <div className="w-full max-w-sm">
 
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Exam
+          </label>
+
+          <select
+            value={exam}
+            onChange={(e) => setExam(e.target.value)}
+            className="w-full border border-gray-300 rounded-lg px-4 py-2 
+        focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="">Select Exam</option>
+            <option value="JeeMains">JEE Mains</option>
+            <option value="JeeAdvance">JEE Advance</option>
+            <option value="Neet">NEET</option>
+          </select>
+
+          <p className="mt-2 text-sm text-gray-600">
+            Selected: {exam}
+          </p>
+
+        </div>
+        {/* </FormControl> */}
         {/* Image Upload */}
         <div className="mb-9">
           <label className="block text-[10px] font-mono tracking-[3px] uppercase text-white/40 mb-2.5">
@@ -198,8 +255,8 @@ export default function Home() {
               onDragLeave={() => setDragOver(false)}
               onDrop={e => { e.preventDefault(); setDragOver(false); handleFile(e.dataTransfer.files[0]); }}
               className={`border-2 border-dashed rounded-2xl p-8 text-center cursor-pointer transition-all duration-300 ${dragOver
-                  ? "border-violet-500/70 bg-violet-500/10 scale-[1.01]"
-                  : "border-white/10 bg-white/[0.02] hover:border-violet-500/40 hover:bg-violet-500/5"
+                ? "border-violet-500/70 bg-violet-500/10 scale-[1.01]"
+                : "border-white/10 bg-white/[0.02] hover:border-violet-500/40 hover:bg-violet-500/5"
                 }`}
             >
               <div className="text-4xl mb-3">🖼️</div>
