@@ -1,0 +1,23 @@
+{
+  "name": "questionsubmit",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
+  },
+  "dependencies": {
+    "@neondatabase/serverless": "^1.0.2",
+    "cloudinary": "^2.9.0",
+    "dotenv": "^17.3.1",
+    "next": "16.1.6",
+    "next-cloudinary": "^6.17.5",
+    "react": "19.2.3",
+    "react-dom": "19.2.3"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "tailwindcss": "^4"
+  }
+}
