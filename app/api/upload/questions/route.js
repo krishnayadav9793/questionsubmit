@@ -32,11 +32,11 @@ export async function POST(req) {
         `;
 
         const questionId = result[0].Ques_id;
-
+        const exam_id= sql`select exam_id from "Exam" where exam_name=${Exam}`
         // insert exam mapping
         await sql`
-        INSERT INTO "ExamQuestion" ("Ques_id","Exam")
-        VALUES (${questionId}, ${Exam})
+        INSERT INTO "ExamQuestion" ("Ques_id","Exam_id")
+        VALUES (${questionId}, ${exam_id[0].exam_id})
         `;
 
         return NextResponse.json({
